@@ -1,4 +1,6 @@
-# Proyecto-Integrador-I
+# Proyecto Integrador I: Análisis de la relación entre datos con Algoritmia
+# Las matemáticas que hacen posible el ‘Data Science’
+
 
 ## Requisitos previos
 
