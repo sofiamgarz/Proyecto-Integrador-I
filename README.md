@@ -64,3 +64,16 @@ pip install pandas numpy scikit-learn matplotlib seaborn
 
 **Nota:**  
 Es imprescindible que los archivos de datos (`Monografia_final.csv`, `FINAL_DATOS_IMPUTADOS-2.csv`, etc.) se encuentren en la carpeta `datasets` dentro del directorio del proyecto.
+
+---
+
+## Uso del Script de Matlab
+
+1. Abrir Matlab 
+2. Ejecutar en la terminal de matlab `pyenv`
+3. Copiar la ruta del Excutable que aparece en el output
+4. Ejecutar este comando 
+```
+/tu/ruta/executable/python3 -m pip install scikit-learn
+````
+5. Finalmente ejecutar el script
