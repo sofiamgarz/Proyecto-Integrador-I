@@ -1,12 +1,10 @@
-
-% Script: monografia_analysis_corregido.m
 % Descripción: Importa datos, imputa valores faltantes usando Python, normaliza,
 % aplica PCA y clustering K-means en MATLAB.
 
 clear; clc; close all; % Limpiar entorno
 
-% --- PASOS PREVIOS ---
-fprintf('--- PASOS PREVIOS ---\n');
+% PASOS PREVIOS
+fprintf('PASOS PREVIOS\n');
 % Importamos la base de datos inicial
 opts = detectImportOptions('datasets/Monografia_final.csv');
 % Especifica que las celdas vacías se traten como NaN para columnas numéricas
@@ -27,8 +25,8 @@ catch ME
 end
 
 
-%% Paso 2: Imputación de datos faltantes con Python (se ejecuta pero su resultado no se usa después)
-disp('--- Ejecutando Paso 2: Imputación (el resultado NO se usará directamente en pasos siguientes) ---');
+%% Paso 2: Imputación de datos faltantes con Python
+disp('Ejecutando Paso 2: Imputación (el resultado NO se usará directamente en pasos siguientes)');
 % Definir columnas a imputar
 columnas_imputar = {'N_empresas','Renta_disponible_media','Tasa_paro', ...
                   'Densidad_poblacion','Transacciones_inmobiliarias', ...
@@ -39,7 +37,7 @@ cols_exist_original = ismember(columnas_imputar, df.Properties.VariableNames);
 if ~all(cols_exist_original)
     warning('Las siguientes columnas para imputar no existen en df: %s. Saltando imputación.', strjoin(columnas_imputar(~cols_exist_original), ', '));
 else
-    % Configurar entorno Python (asegúrate de tener scikit-learn instalado)
+    % Configurar entorno Python (necesario tener scikit-learn instalado)
     try
         pe = pyenv;
         fprintf('Usando entorno Python: %s\n', pe.Version);
@@ -80,11 +78,10 @@ else
          end
     end
 end
-disp('--- Fin Paso 2 ---');
 
 
-% --- NORMALIZACIÓN ESTÁNDAR ---
-fprintf('\n--- NORMALIZACIÓN ESTÁNDAR ---\n');
+% NORMALIZACIÓN ESTÁNDAR
+fprintf('\n NORMALIZACIÓN ESTÁNDAR \n');
 % Cargamos el dataset que ya tiene los datos imputados Y CORREGIDOS (N_empresas >= 0)
 try
     Datos_imputados = readtable('datasets/FINAL_DATOS_IMPUTADOS-2.csv');
@@ -122,18 +119,16 @@ standardized_dataset_mat = zscore(dataset_mat);
 % Mostrar resultados de la estandarización
 disp('Muestra de base de datos estandarizada (matriz):');
 disp(head(standardized_dataset_mat, 5));
-fprintf('Media aritmética (estandarizada): %.4f\n', mean(standardized_dataset_mat(:), 'omitnan')); % Usar omitnan por si acaso
-fprintf('Varianza (estandarizada): %.4f\n', var(standardized_dataset_mat(:), 1, 'omitnan')); % Varianza poblacional (N)
-fprintf('Desviación estándar (estandarizada): %.4f\n', std(standardized_dataset_mat(:), 1, 'omitnan')); % Desv. Est. poblacional (N)
+fprintf('Media aritmética (estandarizada): %.4f\n', mean(standardized_dataset_mat(:), 'omitnan')); 
+fprintf('Varianza (estandarizada): %.4f\n', var(standardized_dataset_mat(:), 1, 'omitnan')); 
+fprintf('Desviación estándar (estandarizada): %.4f\n', std(standardized_dataset_mat(:), 1, 'omitnan')); 
 
 % Convertir la matriz estandarizada de nuevo a tabla
 df_standardized = array2table(standardized_dataset_mat, 'VariableNames', columnas_a_std_nombres);
 
 % Concatenar con las columnas no estandarizadas
 df_final = [df_standardized, columnas_no_std];
-
-% Reordenar columnas si es necesario (para que coincida con el CSV guardado)
-% df_final = df_final(:, Datos_imputados.Properties.VariableNames); % Descomentar si el orden importa mucho
+% df_final = df_final(:, Datos_imputados.Properties.VariableNames);
 
 disp('Primeras 5 filas de la tabla final estandarizada:');
 disp(head(df_final,5));
@@ -147,8 +142,8 @@ catch ME
     % Continuar si el guardado falla, pero advertir.
 end
 
-% --- PCA (Análisis de Componentes Principales) ---
-fprintf('\n--- PCA ---\n');
+% PCA (Análisis de Componentes Principales)
+fprintf('\n PCA \n');
 % Usaremos df_final que acabamos de crear, en lugar de recargar el CSV
 Standardized_dataset = df_final; % Usar la tabla ya en memoria
 
@@ -184,7 +179,7 @@ if any(isinf(X(:))) || any(isnan(X(:)))
 end
 
 
-% Usamos Codigo_Postal como 'etiquetas' para colorear
+% Usamos Codigo_Postal como etiquetas
 try
     y = Standardized_dataset.Codigo_Postal;
     % Convertir a categórico para asegurar que gscatter lo trate como grupos distintos
@@ -214,10 +209,10 @@ set(gcf, 'Position', [100, 100, 1000, 400]); % Ajustar tamaño ventana
 % Antes del PCA (usando las 2 primeras variables originales estandarizadas)
 subplot(1, 2, 1);
 gscatter(X(:, 1), X(:, 2), y_group, [], '.', 10); % gscatter para colorear por grupo
-xlabel('x1'); % *** CORREGIDO: Etiqueta genérica ***
-ylabel('x2'); % *** CORREGIDO: Etiqueta genérica ***
-title('Antes del PCA'); % *** CORREGIDO: Título genérico ***
-legend off; % Ocultar leyenda si hay demasiados grupos (CPs)
+xlabel('x1');
+ylabel('x2');
+title('Antes del PCA'); 
+legend off; )
 grid on;
 
 % Después del PCA
@@ -238,8 +233,8 @@ fprintf('Componentes Principales (loadings) para %d componentes:\n', num_compone
 disp(abs(coeff)); % Coeficientes (loadings)
 
 
-% --- CLUSTERING K-MEANS con PCA ---
-fprintf('\n--- CLUSTERING K-MEANS con PCA ---\n');
+% CLUSTERING K-MEANS con PCA
+fprintf('\n CLUSTERING K-MEANS con PCA \n');
 % Usamos las mismas variables que para el PCA anterior (X ya está definido)
 
 % 1. PCA para determinar número óptimo de componentes (Método del codo para varianza)
@@ -313,7 +308,7 @@ ylabel('WCSS (Suma de cuadrados intra-cluster)');
 grid on;
 xticks(1:max_k);
 
-% 4. Aplicar K-Means con el número de clusters elegido (según el codo, ~4)
+% 4. Aplicar K-Means con el número de clusters elegido (según la regla del codo, ~4)
 num_clusters = 4;
 fprintf('Aplicando K-Means con k = %d clusters basado en el gráfico del codo.\n', num_clusters);
 rng(42); % Resetear semilla para la ejecución final
@@ -345,7 +340,7 @@ disp(head(df_segm_pca_kmeans, 5));
 % 6. Visualizar los clusters usando los dos primeros componentes PCA
 figure('Name', 'Clusters K-Means sobre Componentes PCA');
 set(gcf, 'Position', [250, 250, 800, 600]);
-gscatter(df_segm_pca_kmeans.Componente_2, df_segm_pca_kmeans.Componente_1, df_segm_pca_kmeans.Segment, 'grmc', '.', 15); % Colores g,r,m,c
+gscatter(df_segm_pca_kmeans.Componente_2, df_segm_pca_kmeans.Componente_1, df_segm_pca_kmeans.Segment, 'grmc', '.', 15);
 xlabel('Componente 2');
 ylabel('Componente 1');
 title('Clusters por Componentes del PCA (K-Means)');
@@ -356,8 +351,8 @@ grid on;
 disp('Centroides de los clusters (en el espacio PCA):');
 disp(array2table(C, 'VariableNames', scores_pca_table.Properties.VariableNames)); % Mostrar como tabla
 
-% --- INTERPRETACIÓN Y ANÁLISIS ---
-fprintf('\n--- INTERPRETACIÓN Y ANÁLISIS ---\n');
+% INTERPRETACIÓN Y ANÁLISIS
+fprintf('\n INTERPRETACIÓN Y ANÁLISIS \n');
 
 % Asegurarse de que 'Municipio' esté disponible en Standardized_dataset
 if ~ismember('Municipio', Standardized_dataset.Properties.VariableNames)
@@ -368,7 +363,7 @@ else
     df_segm_pca_kmeans = addvars(df_segm_pca_kmeans, Standardized_dataset.Municipio, 'Before', 1, 'NewVariableNames', 'Municipio');
 
     % Agrupar municipios por segmento
-    segmentos_unicos = unique(df_segm_pca_kmeans.Segment, 'stable'); % Mantener orden
+    segmentos_unicos = unique(df_segm_pca_kmeans.Segment, 'stable'); 
     fprintf('Municipios por Segmento:\n');
     for i = 1:length(segmentos_unicos)
         segmento_actual = segmentos_unicos(i);
@@ -384,5 +379,3 @@ else
         end
     end
 end
-
-fprintf('\n--- Fin del Script MATLAB ---\n');
