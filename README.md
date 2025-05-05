@@ -1,5 +1,6 @@
 # Proyecto Integrador I: Análisis de la relación entre datos con Algoritmia
 Las matemáticas que hacen posible el ‘Data Science’
+
 PALABRAS CLAVE: Aprendizaje Automático, Machine Learning, Ciencia de Datos, Análisis de Componentes Principales (PCA), K-means Clustering, Estadística Socioeconómica.
 
 
