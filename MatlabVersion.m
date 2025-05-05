@@ -1,4 +1,3 @@
-% Script: monografia_analysis.m
 % Descripción: Importa datos, imputa valores faltantes usando Python, normaliza,
 % aplica PCA y clustering K-means en MATLAB.
 
